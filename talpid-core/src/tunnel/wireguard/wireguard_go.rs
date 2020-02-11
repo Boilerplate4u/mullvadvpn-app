@@ -5,11 +5,16 @@ use crate::tunnel::{
 };
 use ipnetwork::IpNetwork;
 use std::{
-    ffi::{c_void, CStr, CString},
+    ffi::{c_void, CStr},
     os::raw::c_char,
     path::Path,
 };
 use zeroize::Zeroize;
+
+#[cfg(target_os = "windows")]
+use std::ffi::CString;
+
+
 
 #[cfg(target_os = "android")]
 use crate::tunnel::tun_provider;
@@ -20,7 +25,6 @@ use {
     std::{
         net::IpAddr,
         os::unix::io::{AsRawFd, RawFd},
-        ptr,
     },
 };
 
@@ -87,10 +91,12 @@ impl WgGoTunnel {
         }
 
         #[cfg(target_os = "android")]
-        Self::bypass_tunnel_sockets(&mut tunnel_device, handle).or_else(|_| {
-            clean_up_logging(logging_context);
-            Err(Error::BypassError)
-        })?;
+        {
+            if let Err(e) = Self::bypass_tunnel_sockets(&mut tunnel_device, handle) {
+                clean_up_logging(logging_context);
+                return Err(Error::BypassError(e));
+            }
+        }
 
         Ok(WgGoTunnel {
             interface_name,
