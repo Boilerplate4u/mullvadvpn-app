@@ -53,7 +53,7 @@ func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext)
 
 	device := device.NewDevice(tunDevice, logger)
 
-	setErr = device.IpcSetOperation(bufio.NewReader(strings.NewReader(settings)))
+	setErr := device.IpcSetOperation(bufio.NewReader(strings.NewReader(settings)))
 	if setErr != nil {
 		logger.Error.Println(setErr)
 		device.Close()
