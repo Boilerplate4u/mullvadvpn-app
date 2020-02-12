@@ -14,8 +14,6 @@ use zeroize::Zeroize;
 #[cfg(target_os = "windows")]
 use std::ffi::CString;
 
-
-
 #[cfg(target_os = "android")]
 use crate::tunnel::tun_provider;
 
