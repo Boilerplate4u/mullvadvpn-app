@@ -34,12 +34,12 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 
 	if cIfaceName == nil {
 		logger.Error.Println("cIfaceName is null")
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	if cSettings == nil {
 		logger.Error.Println("cSettings is null")
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	settings := C.GoString(cSettings)
@@ -51,7 +51,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	watcher, err := interfacewatcher.NewWatcher()
 	if err != nil {
 		logger.Error.Println(err)
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	defer watcher.Destroy()
 
@@ -59,7 +59,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	if err != nil {
 		logger.Error.Println("Failed to create tunnel")
 		logger.Error.Println(err)
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	nativeTun := wintun.(*tun.NativeTun)
@@ -68,7 +68,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	if err != nil {
 		nativeTun.Close()
 		logger.Error.Println("Failed to determine name of wintun adapter")
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	if actualInterfaceName != ifaceName {
@@ -76,7 +76,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 		// This indicates there is already an adapter with the name we intended to use.
 		nativeTun.Close()
 		logger.Error.Println("Failed to create adapter with specific name")
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	device := device.NewDevice(wintun, logger)
@@ -86,7 +86,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 		logger.Error.Println("Failed to set device configuration")
 		logger.Error.Println(setError)
 		device.Close()
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	device.Up()
@@ -107,7 +107,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	if !watcher.Join(interfaces, 5) {
 		logger.Error.Println("Failed to wait for IP interfaces to become available")
 		device.Close()
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	logger.Debug.Println("Interfaces OK")
@@ -121,7 +121,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	if err != nil {
 		logger.Error.Println(err)
 		device.Close()
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	
 	return handle

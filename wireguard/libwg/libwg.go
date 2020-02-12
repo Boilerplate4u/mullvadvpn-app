@@ -19,6 +19,11 @@ import (
 	"github.com/mullvad/mullvadvpn-app/wireguard/libwg/tunnelcontainer"
 )
 
+const (
+	ERROR_GENERAL_FAILURE = -1
+	ERROR_INTERMITTENT_FAILURE = -2
+)
+
 var tunnels tunnelcontainer.Container
 
 func init() {

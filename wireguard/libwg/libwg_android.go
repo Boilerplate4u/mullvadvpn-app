@@ -26,11 +26,6 @@ import (
 type LogSink = unsafe.Pointer
 type LogContext = unsafe.Pointer
 
-const (
-	ERROR_GENERAL_FAILURE = -1
-	ERROR_INTERMITTENT_FAILURE = -2
-)
-
 //export wgTurnOn
 func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext) int32 {
 	logger := logging.NewLogger(logSink, logContext)
@@ -81,11 +76,11 @@ func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext)
 func wgGetSocketV4(tunnelHandle int32) int32 {
 	tunnel, err := tunnels.Get(tunnelHandle)
 	if err != nil {
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	fd, err := tunnel.Device.PeekLookAtSocketFd4()
 	if err != nil {
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	return int32(fd)
 }
@@ -94,11 +89,11 @@ func wgGetSocketV4(tunnelHandle int32) int32 {
 func wgGetSocketV6(tunnelHandle int32) int32 {
 	tunnel, err := tunnels.Get(tunnelHandle)
 	if err != nil {
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	fd, err := tunnel.Device.PeekLookAtSocketFd6()
 	if err != nil {
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	return int32(fd)
 }

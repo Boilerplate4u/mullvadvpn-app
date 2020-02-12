@@ -36,7 +36,7 @@ func wgTurnOn(mtu int, cSettings *C.char, fd int, logSink LogSink, logContext Lo
 
 	if cSettings == nil {
 		logger.Error.Println("cSettings is null")
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 	settings := C.GoString(cSettings)
 
@@ -45,9 +45,9 @@ func wgTurnOn(mtu int, cSettings *C.char, fd int, logSink LogSink, logContext Lo
 	if err != nil {
 		logger.Error.Println(err)
 		if err.Error() == "bad file descriptor" {
-			return -2
+			return ERROR_INTERMITTENT_FAILURE
 		}
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	device := device.NewDevice(tunDevice, logger)
@@ -56,7 +56,7 @@ func wgTurnOn(mtu int, cSettings *C.char, fd int, logSink LogSink, logContext Lo
 	if setErr != nil {
 		logger.Error.Println(setErr)
 		device.Close()
-		return -2
+		return ERROR_INTERMITTENT_FAILURE
 	}
 
 	device.Up()
@@ -70,7 +70,7 @@ func wgTurnOn(mtu int, cSettings *C.char, fd int, logSink LogSink, logContext Lo
 	if err != nil {
 		logger.Error.Println(err)
 		device.Close()
-		return -1
+		return ERROR_GENERAL_FAILURE
 	}
 
 	return handle
