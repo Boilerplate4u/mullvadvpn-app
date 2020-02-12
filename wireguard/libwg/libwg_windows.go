@@ -9,15 +9,15 @@ package main
 import (
 	"C"
 	"bufio"
-	"unsafe"
 	"strings"
-	
+	"unsafe"
+
 	"golang.org/x/sys/windows"
 
 	"golang.zx2c4.com/wireguard/device"
 	"golang.zx2c4.com/wireguard/tun"
 	"golang.zx2c4.com/wireguard/windows/tunnel/winipcfg"
-	
+
 	"github.com/mullvad/mullvadvpn-app/wireguard/libwg/interfacewatcher"
 	"github.com/mullvad/mullvadvpn-app/wireguard/libwg/logging"
 	"github.com/mullvad/mullvadvpn-app/wireguard/libwg/tunnelcontainer"
@@ -46,7 +46,7 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 	ifaceName := C.GoString(cIfaceName)
 
 	// {AFE43773-E1F8-4EBB-8536-576AB86AFE9A}
-	networkId := windows.GUID { 0xafe43773, 0xe1f8, 0x4ebb, [8]byte{ 0x85, 0x36, 0x57, 0x6a, 0xb8, 0x6a, 0xfe, 0x9a } }
+	networkId := windows.GUID{0xafe43773, 0xe1f8, 0x4ebb, [8]byte{0x85, 0x36, 0x57, 0x6a, 0xb8, 0x6a, 0xfe, 0x9a}}
 
 	watcher, err := interfacewatcher.NewWatcher()
 	if err != nil {
@@ -93,11 +93,11 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 
 	interfaces := []interfacewatcher.Event{
 		{
-			Luid: winipcfg.LUID(nativeTun.LUID()),
+			Luid:   winipcfg.LUID(nativeTun.LUID()),
 			Family: windows.AF_INET,
 		},
 		{
-			Luid: winipcfg.LUID(nativeTun.LUID()),
+			Luid:   winipcfg.LUID(nativeTun.LUID()),
 			Family: windows.AF_INET6,
 		},
 	}
@@ -112,18 +112,18 @@ func wgTurnOn(cIfaceName *C.char, mtu int, cSettings *C.char, logSink LogSink, l
 
 	logger.Debug.Println("Interfaces OK")
 
-	context := tunnelcontainer.Context {
+	context := tunnelcontainer.Context{
 		Device: device,
 		Logger: logger,
 	}
-	
+
 	handle, err := tunnels.Insert(context)
 	if err != nil {
 		logger.Error.Println(err)
 		device.Close()
 		return ERROR_GENERAL_FAILURE
 	}
-	
+
 	return handle
 }
 

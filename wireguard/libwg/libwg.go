@@ -14,13 +14,13 @@ import (
 	"bytes"
 	"runtime"
 	"unsafe"
-	
-	"golang.zx2c4.com/wireguard/device"
+
 	"github.com/mullvad/mullvadvpn-app/wireguard/libwg/tunnelcontainer"
+	"golang.zx2c4.com/wireguard/device"
 )
 
 const (
-	ERROR_GENERAL_FAILURE = -1
+	ERROR_GENERAL_FAILURE      = -1
 	ERROR_INTERMITTENT_FAILURE = -2
 )
 

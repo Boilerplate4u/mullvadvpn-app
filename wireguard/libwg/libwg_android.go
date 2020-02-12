@@ -57,7 +57,7 @@ func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext)
 
 	device.Up()
 
-	context := tunnelcontainer.Context {
+	context := tunnelcontainer.Context{
 		Device: device,
 		Logger: logger,
 	}
