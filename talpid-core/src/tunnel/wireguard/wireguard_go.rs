@@ -320,8 +320,7 @@ extern "C" {
     //
     // Positive return values are tunnel handles for this specific wireguard tunnel instance.
     // Negative return values signify errors. All error codes are opaque.
-    #[cfg(not(target_os = "android"))]
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(not(any(target_os = "android", target_os = "windows")))]
     fn wgTurnOn(
         mtu: isize,
         settings: *const i8,
