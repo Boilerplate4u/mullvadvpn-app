@@ -11,7 +11,7 @@ import (
 	"bufio"
 	"strings"
 	"unsafe"
-	
+
 	"golang.org/x/sys/unix"
 
 	"golang.zx2c4.com/wireguard/device"
@@ -53,9 +53,9 @@ func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext)
 
 	device := device.NewDevice(tunDevice, logger)
 
-	err = device.IpcSetOperation(bufio.NewReader(strings.NewReader(settings)))
-	if err != nil {
-		logger.Error.Println(err)
+	setErr = device.IpcSetOperation(bufio.NewReader(strings.NewReader(settings)))
+	if setErr != nil {
+		logger.Error.Println(setErr)
 		device.Close()
 		return ERROR_INTERMITTENT_FAILURE
 	}
@@ -66,14 +66,14 @@ func wgTurnOn(cSettings *C.char, fd int, logSink LogSink, logContext LogContext)
 		Device: device,
 		Logger: logger,
 	}
-	
+
 	handle, err := tunnels.Insert(context)
 	if err != nil {
 		logger.Error.Println(err)
 		device.Close()
 		return ERROR_GENERAL_FAILURE
 	}
-	
+
 	return handle
 }
 
